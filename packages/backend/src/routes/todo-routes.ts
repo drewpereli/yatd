@@ -16,7 +16,7 @@ router.post('/', async (req, res) => {
   try {
     const todo = await prisma.todo.create({
       data: {
-        done: false,
+        done: req.body.done,
         content: req.body.content,
         title: req.body.title,
       },
