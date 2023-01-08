@@ -30,8 +30,8 @@ router.post(
       const todo = await prisma.todo.create({
         data: {
           done: req.body.done,
-          content: req.body.content,
           title: req.body.title,
+          description: req.body.description,
           userId: req.auth!.id,
         },
       });

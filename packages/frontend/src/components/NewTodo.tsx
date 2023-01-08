@@ -6,18 +6,18 @@ const NewTodo: Component = function () {
   const store = useData();
 
   const [title, setTitle] = createSignal('');
-  const [content, setContent] = createSignal('');
+  const [description, setDescription] = createSignal('');
 
   const [titleId, contentId] = [randomId('title'), randomId('content')];
 
   const createTodo = async () => {
     await store.createTodo({
       title: title(),
-      content: content(),
+      description: description(),
     });
 
     setTitle('');
-    setContent('');
+    setDescription('');
   };
 
   return (
@@ -34,11 +34,11 @@ const NewTodo: Component = function () {
         </div>
 
         <div>
-          <label for={contentId}>Content</label>
+          <label for={contentId}>Description</label>
           <textarea
             id={contentId}
-            value={content()}
-            onInput={(e) => setContent(e.currentTarget.value)}
+            value={description()}
+            onInput={(e) => setDescription(e.currentTarget.value)}
             class="border border-gray-300 rounded w-full focus:outline-indigo-400 px-2 py-1"
             rows="7"
           />
