@@ -7,27 +7,22 @@ import {
 } from 'solid-js';
 import { createStore } from 'solid-js/store';
 import type { Todo } from '@prisma/client';
+import { request } from './src/utils/api';
 
 const StoreContext = createContext<ContextType>();
 
-const fetchTodos = async () => {
-  const response = await fetch('http://localhost:4000/api/v1/todos');
-  const todos: Todo[] = await response.json();
-  return todos;
+const fetchTodos = async (): Promise<Todo[]> => {
+  return request('/todos');
 };
 
-const createTodo = async (todo: Omit<Todo, 'id'>) => {
-  const response = await fetch('http://localhost:4000/api/v1/todos', {
+const createTodo = async (todo: Omit<Todo, 'id'>): Promise<Todo> => {
+  return request('/todos', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify(todo),
   });
-
-  const t: Todo = await response.json();
-
-  return t;
 };
 
 type ContextType = {
