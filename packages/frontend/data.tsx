@@ -15,7 +15,7 @@ const fetchTodos = async (): Promise<Todo[]> => {
   return request('/todos');
 };
 
-const createTodo = async (todo: Omit<Todo, 'id'>): Promise<Todo> => {
+const createTodo = async (todo: Omit<Todo, 'id' | 'userId'>): Promise<Todo> => {
   return request('/todos', {
     method: 'POST',
     headers: {
@@ -30,7 +30,7 @@ type ContextType = {
   fetchTodosIsRunning: Accessor<boolean>;
   createTodosIsRunning: Accessor<boolean>;
   fetchTodos: () => Promise<void>;
-  createTodo: (data: Omit<Todo, 'id' | 'done'>) => Promise<void>;
+  createTodo: (data: Omit<Todo, 'id' | 'done' | 'userId'>) => Promise<void>;
 };
 
 export const DataProvider = function (props: { children: JSXElement }) {
@@ -48,7 +48,7 @@ export const DataProvider = function (props: { children: JSXElement }) {
       setTodos(t);
       setFetchTodosIsRunning(false);
     },
-    async createTodo(data: Omit<Todo, 'id' | 'done'>) {
+    async createTodo(data) {
       setCreateTodosIsRunning(true);
 
       const t = await createTodo({
