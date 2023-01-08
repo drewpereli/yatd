@@ -16,6 +16,13 @@ const config = convict({
     format: String,
     default: null,
   },
+  JWT_SECRET: {
+    doc: 'The JWT secret.',
+    env: 'JWT_SECRET',
+    format: String,
+    default: '',
+    sensitive: true,
+  },
 });
 
 config.validate();

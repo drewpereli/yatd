@@ -3,6 +3,7 @@ import config from './config';
 import cors from 'cors';
 
 import todoRoutes from './routes/todo-routes';
+import authRoutes from './routes/auth-routes';
 
 const app = express();
 
@@ -14,6 +15,7 @@ app.use(
 );
 
 app.use('/api/v1/todos', todoRoutes);
+app.use('/api/v1/auth', authRoutes);
 
 app.listen(config.get('PORT'), () => {
   console.log(
