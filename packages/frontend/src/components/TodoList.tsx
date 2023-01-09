@@ -7,10 +7,21 @@ const TodoList: Component = function () {
 
   onMount(data.fetchTodos);
 
+  const doneTodos = () => data.todos.filter((todo) => todo.done);
+  const notDoneTodos = () => data.todos.filter((todo) => !todo.done);
+
   return (
-    <div>
+    <div class="space-y-4">
       <Show when={!data.fetchTodosIsRunning()} fallback={<div>Loading...</div>}>
-        <For each={data.todos}>{(todo) => <TodoItem todo={todo} />}</For>
+        <div class="space-y-2">
+          <h3 class="text-xl font-bold">Not Done</h3>
+          <For each={notDoneTodos()}>{(todo) => <TodoItem todo={todo} />}</For>
+        </div>
+
+        <div class="space-y-2">
+          <h3 class="text-xl font-bold">Done</h3>
+          <For each={doneTodos()}>{(todo) => <TodoItem todo={todo} />}</For>
+        </div>
       </Show>
     </div>
   );
