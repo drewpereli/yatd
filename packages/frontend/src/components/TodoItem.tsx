@@ -13,13 +13,13 @@ const TodoItem: Component<{ todo: Todo }> = function ({ todo }) {
   };
 
   return (
-    <div class="flex items-center space-x-4">
+    <div class="grid grid-cols-[1rem_1fr_1rem] gap-2">
       <input type="checkbox" checked={todo.done} onChange={toggleTodo} />
 
       <h3 class="font-bold">{todo.title}</h3>
 
       <Show when={todo.description}>
-        <p class="truncate">{todo.description}</p>
+        <p class="truncate col-start-2">{todo.description}</p>
       </Show>
     </div>
   );
