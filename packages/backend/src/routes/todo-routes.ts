@@ -48,4 +48,43 @@ router.post(
   }
 );
 
+router.put(
+  '/:id',
+  expressjwt({ secret: config.get('JWT_SECRET'), algorithms: ['HS256'] }),
+  async (req: JwtRequest<JwtPayload>, res) => {
+    try {
+      const todo = await prisma.todo.findFirst({
+        where: {
+          id: Number(req.params.id),
+          userId: req.auth!.id,
+        },
+      });
+
+      if (!todo) {
+        return res.status(404).json({ message: 'Todo not found' });
+      }
+
+      const updatedTodo = await prisma.todo.update({
+        where: {
+          id: Number(req.params.id),
+        },
+        data: {
+          done: req.body.done,
+          title: req.body.title,
+          description: req.body.description,
+        },
+      });
+
+      res.json(updatedTodo);
+    } catch (error) {
+      if (error instanceof PrismaClientValidationError) {
+        res.status(400).json({ message: 'Invalid body' });
+      } else {
+        console.error(error);
+        res.status(500).json({ message: 'There was an error' });
+      }
+    }
+  }
+);
+
 export default router;

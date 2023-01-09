@@ -18,9 +18,13 @@ const fetchTodos = async (): Promise<Todo[]> => {
 const createTodo = async (todo: Omit<Todo, 'id' | 'userId'>): Promise<Todo> => {
   return request('/todos', {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
+    body: JSON.stringify(todo),
+  });
+};
+
+const updateTodo = async (todo: Omit<Todo, 'userId'>): Promise<Todo> => {
+  return request(`/todos/${todo.id}`, {
+    method: 'PUT',
     body: JSON.stringify(todo),
   });
 };
@@ -31,6 +35,7 @@ type ContextType = {
   createTodosIsRunning: Accessor<boolean>;
   fetchTodos: () => Promise<void>;
   createTodo: (data: Omit<Todo, 'id' | 'done' | 'userId'>) => Promise<void>;
+  updateTodo: (todo: Parameters<typeof updateTodo>[0]) => Promise<void>;
 };
 
 export const DataProvider = function (props: { children: JSXElement }) {
@@ -59,6 +64,11 @@ export const DataProvider = function (props: { children: JSXElement }) {
       setTodos([...todos, t]);
 
       setCreateTodosIsRunning(false);
+    },
+    async updateTodo(data) {
+      const t = await updateTodo(data);
+
+      setTodos(todos.map((todo) => (todo.id === t.id ? t : todo)));
     },
   };
 
