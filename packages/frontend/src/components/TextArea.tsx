@@ -1,12 +1,13 @@
 import { Component, Show } from 'solid-js';
 import { randomId } from '../utils/random-id';
 
-const Input: Component<{
+const TextArea: Component<{
   label?: string;
   value: string;
   setValue: (v: string) => unknown;
   type?: string;
   class?: string;
+  rows?: number; // Defaults to 7
 }> = function (props) {
   const id = randomId(props.label || 'input');
 
@@ -15,15 +16,15 @@ const Input: Component<{
       <Show when={props.label}>
         <label for={id}>{props.label}</label>
       </Show>
-      <input
+      <textarea
         id={id}
         value={props.value}
-        type={props.type || 'text'}
         onInput={(e) => props.setValue(e.currentTarget.value)}
+        rows={props.rows || 7}
         class="border border-gray-300 rounded w-full focus:outline-indigo-400 px-2 py-1"
       />
     </div>
   );
 };
 
-export default Input;
+export default TextArea;
