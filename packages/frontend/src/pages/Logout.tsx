@@ -1,9 +1,10 @@
 import { useNavigate } from '@solidjs/router';
 import { Component } from 'solid-js';
-import { clearAuthToken } from '../utils/auth';
+import { useAuth } from '../contexts/auth';
 
 const Logout: Component = function () {
-  clearAuthToken();
+  const { logOut } = useAuth();
+  logOut();
   useNavigate()('/login');
   return '';
 };

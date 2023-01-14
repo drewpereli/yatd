@@ -2,11 +2,13 @@ import { useNavigate } from '@solidjs/router';
 import { Component } from 'solid-js';
 import NewTodo from '../components/NewTodo';
 import TodoList from '../components/TodoList';
-import { isLoggedIn } from '../utils/auth';
+import { useAuth } from '../contexts/auth';
 
 const HomePage: Component = function () {
+  const { isLoggedIn } = useAuth();
+
   if (!isLoggedIn()) {
-    useNavigate()('/sign-up');
+    useNavigate()('/login');
     return;
   }
 

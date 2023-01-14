@@ -1,9 +1,9 @@
-import { getAuthToken } from './auth';
+import { getAuthTokenLocalStorage } from './local-storage';
 
 export async function request(url: `/${string}`, options: RequestInit = {}) {
   const defaultHeaders = {
     'Content-Type': 'application/json',
-    Authorization: `Bearer ${getAuthToken()}`,
+    Authorization: `Bearer ${getAuthTokenLocalStorage()}`,
   };
 
   const headers = {

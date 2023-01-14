@@ -2,8 +2,7 @@ import { useNavigate } from '@solidjs/router';
 import { Component, createSignal } from 'solid-js';
 import Button from '../components/Button';
 import Input from '../components/Input';
-import { request } from '../utils/api';
-import { setAuthToken } from '../utils/auth';
+import { useAuth } from '../contexts/auth';
 
 const Login: Component = function () {
   const [username, setUsername] = createSignal('');
@@ -11,19 +10,10 @@ const Login: Component = function () {
 
   const navigate = useNavigate();
 
-  const logIn = async () => {
-    const resp = await request('/auth/login', {
-      method: 'POST',
-      body: JSON.stringify({
-        username: username(),
-        password: password(),
-      }),
-    });
+  const { logIn } = useAuth();
 
-    console.log(resp);
-
-    if (resp.access_token) {
-      setAuthToken(resp.access_token);
+  const onLogIn = async () => {
+    if (await logIn({ username: username(), password: password() })) {
       navigate('/');
       return;
     }
@@ -43,7 +33,7 @@ const Login: Component = function () {
         />
 
         <div class="flex items-center justify-end">
-          <Button label="Log In" onClick={logIn} />
+          <Button label="Log In" onClick={onLogIn} />
         </div>
       </form>
     </div>
