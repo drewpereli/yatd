@@ -1,6 +1,6 @@
 import type { Todo } from '@prisma/client';
 import { Component, createSignal, Match, Show, Switch } from 'solid-js';
-import { useData } from '../../data';
+import { useData } from '../contexts/data';
 import Button from './Button';
 import Input from './Input';
 import TextArea from './TextArea';

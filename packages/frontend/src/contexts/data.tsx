@@ -7,7 +7,7 @@ import {
 } from 'solid-js';
 import { createStore } from 'solid-js/store';
 import type { Todo } from '@prisma/client';
-import { request } from './src/utils/api';
+import { request } from '../utils/api';
 
 const StoreContext = createContext<ContextType>();
 

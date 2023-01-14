@@ -1,5 +1,5 @@
 import { Component, For, onMount, Show } from 'solid-js';
-import { useData } from '../../data';
+import { useData } from '../contexts/data';
 import TodoItem from './TodoItem';
 
 const TodoList: Component = function () {

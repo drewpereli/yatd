@@ -1,6 +1,6 @@
 import { Route, Routes } from '@solidjs/router';
 import type { Component } from 'solid-js';
-import { DataProvider } from '../data';
+import { DataProvider } from './contexts/data';
 import Four0Four from './pages/404';
 import HomePage from './pages/Home';
 import Login from './pages/Login';

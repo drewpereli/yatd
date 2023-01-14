@@ -1,5 +1,5 @@
 import { Component, createSignal } from 'solid-js';
-import { useData } from '../../data';
+import { useData } from '../contexts/data';
 import { randomId } from '../utils/random-id';
 
 const NewTodo: Component = function () {
