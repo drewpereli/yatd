@@ -20,8 +20,8 @@ const Login: Component = function () {
   };
 
   return (
-    <div>
-      <h1>Log In</h1>
+    <div class="space-y-4">
+      <h1 class="font-bold text-xl">Log In</h1>
 
       <form class="space-y-4">
         <Input label="Username" value={username()} setValue={setUsername} />

@@ -26,8 +26,8 @@ const SignUp: Component = function () {
   };
 
   return (
-    <div>
-      <h1>Sign Up</h1>
+    <div class="space-y-4">
+      <h1 class="font-bold text-xl">Sign Up</h1>
 
       <form class="space-y-4">
         <Input label="Username" value={username()} setValue={setUsername} />
