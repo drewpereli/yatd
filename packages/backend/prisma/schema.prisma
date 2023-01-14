@@ -24,4 +24,5 @@ model Todo {
   done        Boolean @default(false)
   user        User    @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId      Int
+  createdAt   DateTime @default(now())
 }
