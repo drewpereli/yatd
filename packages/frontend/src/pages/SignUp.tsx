@@ -3,26 +3,50 @@ import { Component, createSignal } from 'solid-js';
 import Button from '../components/Button';
 import Input from '../components/Input';
 import { useAuth } from '../contexts/auth';
+import type { AuthErrorCode } from 'backend/src/routes/auth-routes';
+
+const errorMessages: Partial<Record<AuthErrorCode, string>> = {
+  weak_password: 'Password is too weak',
+  username_taken: 'Username is already taken',
+};
+
+const fallbackMessage = 'Something went wrong. Please try again later.';
 
 const SignUp: Component = function () {
   const [username, setUsername] = createSignal('');
   const [password, setPassword] = createSignal('');
   const [passwordConfirmation, setPasswordConfirmation] = createSignal('');
+  const [error, setError] = createSignal('');
 
   const navigate = useNavigate();
 
   const { signUp } = useAuth();
 
   const onSignUp = async () => {
-    if (
-      await signUp({
-        username: username(),
-        password: password(),
-        passwordConfirmation: passwordConfirmation(),
-      })
-    ) {
+    if (!username() || !password() || !passwordConfirmation()) {
+      setError('Username, password, and password confirmation are required');
+      return;
+    }
+
+    if (password() !== passwordConfirmation()) {
+      setError('Password and password confirmation do not match');
+      return;
+    }
+
+    const successOrMessage = await signUp({
+      username: username(),
+      password: password(),
+      passwordConfirmation: passwordConfirmation(),
+    });
+
+    if (successOrMessage === true) {
       navigate('/');
     }
+
+    const message =
+      errorMessages[successOrMessage as AuthErrorCode] || fallbackMessage;
+
+    setError(message);
   };
 
   return (
@@ -44,7 +68,9 @@ const SignUp: Component = function () {
           type="password"
         />
 
-        <div class="flex items-center justify-end">
+        <div class="flex justify-between">
+          <div>{error() && <p class="text-red-500">{error()}</p>}</div>
+
           <Button label="Sign Up" onClick={onSignUp} />
         </div>
       </form>

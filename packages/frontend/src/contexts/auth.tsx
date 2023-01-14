@@ -12,6 +12,7 @@ import {
   getAuthTokenLocalStorage,
   setAuthTokenLocalStorage,
 } from '../utils/local-storage';
+import { AuthErrorCode } from 'backend/src/routes/auth-routes';
 
 const AuthContext = createContext<ContextType>();
 
@@ -21,8 +22,11 @@ type ContextType = {
     username: string;
     password: string;
     passwordConfirmation: string;
-  }) => Promise<boolean>;
-  logIn: (data: { username: string; password: string }) => Promise<boolean>;
+  }) => Promise<boolean | AuthErrorCode>;
+  logIn: (data: {
+    username: string;
+    password: string;
+  }) => Promise<boolean | AuthErrorCode>;
   logOut: () => Promise<void>;
 };
 
@@ -56,7 +60,7 @@ export const AuthProvider = function (props: { children: JSXElement }) {
       return true;
     }
 
-    return false;
+    return resp.errors?.[0]?.msg ?? false;
   };
 
   const logIn: ContextType['logIn'] = async function ({ username, password }) {
@@ -73,7 +77,7 @@ export const AuthProvider = function (props: { children: JSXElement }) {
       return true;
     }
 
-    return false;
+    return resp.errors?.[0]?.msg ?? false;
   };
 
   const logOut: ContextType['logOut'] = async function () {

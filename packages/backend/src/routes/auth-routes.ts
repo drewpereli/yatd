@@ -1,6 +1,5 @@
 import express from 'express';
 import { PrismaClient, User } from '@prisma/client';
-import { PrismaClientValidationError } from '@prisma/client/runtime';
 import { body, validationResult } from 'express-validator';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
@@ -10,18 +9,39 @@ const prisma = new PrismaClient();
 
 const router = express.Router();
 
+export enum AuthErrorCode {
+  AuthFailed = 'auth_failed',
+  MissingParams = 'missing_params',
+  MismatchedPasswords = 'mismatched_passwords',
+  WeakPassword = 'weak_password',
+  UsernameTaken = 'username_taken',
+}
+
 router.post(
   '/signup',
-  body('username').isString().notEmpty(),
-  body('password').isStrongPassword(),
-  body('password_confirmation').custom(
-    (value, { req }) => value === req.body.password
-  ),
+  body('username')
+    .isString()
+    .notEmpty()
+    .withMessage(AuthErrorCode.MissingParams),
+  body('password').isStrongPassword().withMessage(AuthErrorCode.WeakPassword),
+  body('password_confirmation')
+    .custom((value, { req }) => value === req.body.password)
+    .withMessage(AuthErrorCode.MismatchedPasswords),
   async (req, res) => {
     const errors = validationResult(req);
 
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
+    }
+
+    const existingUser = await prisma.user.findUnique({
+      where: { username: req.body.username },
+    });
+
+    if (existingUser) {
+      return res
+        .status(400)
+        .json({ errors: [{ msg: AuthErrorCode.UsernameTaken }] });
     }
 
     const salt = await bcrypt.genSalt(10);
@@ -42,8 +62,14 @@ router.post(
 
 router.post(
   '/login',
-  body('username').isString().notEmpty(),
-  body('password').isString().notEmpty(),
+  body('username')
+    .isString()
+    .notEmpty()
+    .withMessage(AuthErrorCode.MissingParams),
+  body('password')
+    .isString()
+    .notEmpty()
+    .withMessage(AuthErrorCode.MissingParams),
   async (req, res) => {
     const errors = validationResult(req);
 
@@ -56,7 +82,9 @@ router.post(
     });
 
     if (!user) {
-      return res.status(400).json({ message: 'Username or password is wrong' });
+      return res
+        .status(400)
+        .json({ errors: [{ msg: AuthErrorCode.AuthFailed }] });
     }
 
     const validPassword = await bcrypt.compare(
@@ -65,7 +93,9 @@ router.post(
     );
 
     if (!validPassword) {
-      return res.status(400).json({ message: 'Username or password is wrong' });
+      return res
+        .status(400)
+        .json({ errors: [{ msg: AuthErrorCode.AuthFailed }] });
     }
 
     const access_token = generateAccessToken(user);
