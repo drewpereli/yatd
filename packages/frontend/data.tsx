@@ -15,7 +15,9 @@ const fetchTodos = async (): Promise<Todo[]> => {
   return request('/todos');
 };
 
-const createTodo = async (todo: Omit<Todo, 'id' | 'userId'>): Promise<Todo> => {
+const createTodo = async (
+  todo: Omit<Todo, 'id' | 'userId' | 'createdAt'>
+): Promise<Todo> => {
   return request('/todos', {
     method: 'POST',
     body: JSON.stringify(todo),
@@ -34,7 +36,9 @@ type ContextType = {
   fetchTodosIsRunning: Accessor<boolean>;
   createTodosIsRunning: Accessor<boolean>;
   fetchTodos: () => Promise<void>;
-  createTodo: (data: Omit<Todo, 'id' | 'done' | 'userId'>) => Promise<void>;
+  createTodo: (
+    data: Omit<Todo, 'id' | 'userId' | 'createdAt' | 'done'>
+  ) => Promise<void>;
   updateTodo: (todo: Parameters<typeof updateTodo>[0]) => Promise<void>;
 };
 
