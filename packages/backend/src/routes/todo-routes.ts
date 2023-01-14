@@ -16,6 +16,7 @@ router.get(
   async (req: JwtRequest<JwtPayload>, res) => {
     const todos = await prisma.todo.findMany({
       where: { userId: req.auth!.id },
+      orderBy: { createdAt: 'desc' },
     });
 
     res.json(todos);
