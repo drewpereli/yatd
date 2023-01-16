@@ -1,6 +1,7 @@
 import { Route, Routes } from '@solidjs/router';
 import type { Component } from 'solid-js';
 import NavBar from './components/NavBar';
+import OfflineWarning from './components/OfflineWarning';
 import { ApiProvider } from './contexts/api';
 import { AuthProvider } from './contexts/auth';
 import { DataProvider } from './contexts/data';
@@ -19,6 +20,7 @@ const App: Component = () => {
           <DataProvider>
             <div>
               <NavBar />
+              <OfflineWarning />
               <div class="p-4 flex justify-center">
                 <div class="max-w-4xl w-full">
                   <Routes>

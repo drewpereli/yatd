@@ -17,6 +17,11 @@ app.use(
 app.use('/api/v1/todos', todoRoutes);
 app.use('/api/v1/auth', authRoutes);
 
+// Pinged every few seconds to check online status
+app.get('/api/v1/ping-connection', (_, res) => {
+  res.status(200).json({});
+});
+
 app.listen(config.get('PORT'), () => {
   console.log(
     `Example app listening at http://localhost:${config.get('PORT')}`
