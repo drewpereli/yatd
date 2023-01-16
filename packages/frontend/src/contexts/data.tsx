@@ -7,29 +7,9 @@ import {
 } from 'solid-js';
 import { createStore } from 'solid-js/store';
 import type { Todo } from '@prisma/client';
-import { request } from '../utils/api';
+import { useApi } from './api';
 
 const StoreContext = createContext<ContextType>();
-
-const fetchTodos = async (): Promise<Todo[]> => {
-  return request('/todos');
-};
-
-const createTodo = async (
-  todo: Omit<Todo, 'id' | 'userId' | 'createdAt'>
-): Promise<Todo> => {
-  return request('/todos', {
-    method: 'POST',
-    body: JSON.stringify(todo),
-  });
-};
-
-const updateTodo = async (todo: Omit<Todo, 'userId'>): Promise<Todo> => {
-  return request(`/todos/${todo.id}`, {
-    method: 'PUT',
-    body: JSON.stringify(todo),
-  });
-};
 
 type ContextType = {
   todos: Todo[];
@@ -39,13 +19,34 @@ type ContextType = {
   createTodo: (
     data: Omit<Todo, 'id' | 'userId' | 'createdAt' | 'done'>
   ) => Promise<void>;
-  updateTodo: (todo: Parameters<typeof updateTodo>[0]) => Promise<void>;
+  updateTodo: (todo: Omit<Todo, 'userId'>) => Promise<void>;
 };
 
 export const DataProvider = function (props: { children: JSXElement }) {
   const [todos, setTodos] = createStore<Todo[]>([]);
   const [fetchTodosIsRunning, setFetchTodosIsRunning] = createSignal(false);
   const [createTodosIsRunning, setCreateTodosIsRunning] = createSignal(false);
+  const { request } = useApi();
+
+  const fetchTodos = async (): Promise<Todo[]> => {
+    return request('/todos');
+  };
+
+  const createTodo = async (
+    todo: Omit<Todo, 'id' | 'userId' | 'createdAt'>
+  ): Promise<Todo> => {
+    return request('/todos', {
+      method: 'POST',
+      body: JSON.stringify(todo),
+    });
+  };
+
+  const updateTodo = async (todo: Omit<Todo, 'userId'>): Promise<Todo> => {
+    return request(`/todos/${todo.id}`, {
+      method: 'PUT',
+      body: JSON.stringify(todo),
+    });
+  };
 
   const data: ContextType = {
     todos,

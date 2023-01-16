@@ -1,18 +1,7 @@
-import {
-  Accessor,
-  createContext,
-  createSignal,
-  useContext,
-  JSXElement,
-  createEffect,
-} from 'solid-js';
-import { request } from '../utils/api';
-import {
-  clearAuthTokenLocalStorage,
-  getAuthTokenLocalStorage,
-  setAuthTokenLocalStorage,
-} from '../utils/local-storage';
+import { Accessor, createContext, useContext, JSXElement } from 'solid-js';
 import { AuthErrorCode } from 'backend/src/routes/auth-routes';
+import { useLocalStorage } from './local-storage';
+import { useApi } from './api';
 
 const AuthContext = createContext<ContextType>();
 
@@ -31,19 +20,8 @@ type ContextType = {
 };
 
 export const AuthProvider = function (props: { children: JSXElement }) {
-  const [authToken, setAuthToken] = createSignal<string | null>(
-    getAuthTokenLocalStorage()
-  );
-
-  createEffect(() => {
-    const token = authToken();
-
-    if (token) {
-      setAuthTokenLocalStorage(token);
-    } else {
-      clearAuthTokenLocalStorage();
-    }
-  });
+  const ls = useLocalStorage();
+  const { request } = useApi();
 
   const signUp: ContextType['signUp'] = async function (data) {
     const resp = await request('/auth/signup', {
@@ -56,7 +34,7 @@ export const AuthProvider = function (props: { children: JSXElement }) {
     });
 
     if (resp.access_token) {
-      setAuthToken(resp.access_token);
+      ls.authToken.set(resp.access_token);
       return true;
     }
 
@@ -73,7 +51,7 @@ export const AuthProvider = function (props: { children: JSXElement }) {
     });
 
     if (resp.access_token) {
-      setAuthToken(resp.access_token);
+      ls.authToken.set(resp.access_token);
       return true;
     }
 
@@ -81,13 +59,13 @@ export const AuthProvider = function (props: { children: JSXElement }) {
   };
 
   const logOut: ContextType['logOut'] = async function () {
-    setAuthToken(null);
+    ls.authToken.set(null);
   };
 
   const auth: ContextType = {
     signUp,
     logIn,
-    isLoggedIn: () => !!authToken(),
+    isLoggedIn: () => !!ls.authToken.get(),
     logOut,
   };
 
