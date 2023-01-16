@@ -6,7 +6,7 @@ import Input from './Input';
 import TextArea from './TextArea';
 
 const TodoItem: Component<{ todo: Todo }> = function ({ todo }) {
-  const { updateTodo } = useData();
+  const { updateTodo, deleteTodo } = useData();
   const [isEditing, setIsEditing] = createSignal(false);
 
   const [title, setTitle] = createSignal(todo.title);
@@ -30,7 +30,7 @@ const TodoItem: Component<{ todo: Todo }> = function ({ todo }) {
   };
 
   return (
-    <div class="grid grid-cols-[1rem_1fr_1rem] gap-2">
+    <div class="grid grid-cols-[1rem_1fr_1rem_1rem] gap-2">
       <input type="checkbox" checked={todo.done} onChange={toggleTodo} />
 
       <Show
@@ -43,6 +43,8 @@ const TodoItem: Component<{ todo: Todo }> = function ({ todo }) {
       <button onClick={() => setIsEditing(!isEditing())}>
         {isEditing() ? '✕' : '✎'}
       </button>
+
+      <button onClick={() => deleteTodo(todo.id)}>🗑</button>
 
       <Switch>
         <Match when={isEditing()}>
@@ -59,7 +61,7 @@ const TodoItem: Component<{ todo: Todo }> = function ({ todo }) {
       </Switch>
 
       <Show when={isEditing()}>
-        <div class="col-start-2 col-span-2">
+        <div class="col-start-2 col-span-full">
           <Button onClick={saveChanges} label="Save" />
         </div>
       </Show>
