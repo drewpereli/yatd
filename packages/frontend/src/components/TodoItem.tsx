@@ -1,30 +1,30 @@
-import type { Todo } from '@prisma/client';
 import { Component, createSignal, Match, Show, Switch } from 'solid-js';
-import { useData } from '../contexts/data';
+// import { useData } from '../contexts/data';
+import type { Todo } from '../types';
 import Button from './Button';
 import Input from './Input';
 import TextArea from './TextArea';
 
 const TodoItem: Component<{ todo: Todo }> = function ({ todo }) {
-  const { updateTodo, deleteTodo } = useData();
+  // const { updateTodo, deleteTodo } = useData();
   const [isEditing, setIsEditing] = createSignal(false);
 
   const [title, setTitle] = createSignal(todo.title);
   const [description, setDescription] = createSignal(todo.description ?? '');
 
   const toggleTodo = async () => {
-    return updateTodo({
-      ...todo,
-      done: !todo.done,
-    });
+    // return updateTodo({
+    //   ...todo,
+    //   done: !todo.done,
+    // });
   };
 
   const saveChanges = async () => {
-    await updateTodo({
-      ...todo,
-      title: title(),
-      description: description(),
-    });
+    // await updateTodo({
+    //   ...todo,
+    //   title: title(),
+    //   description: description(),
+    // });
 
     setIsEditing(false);
   };
@@ -44,7 +44,7 @@ const TodoItem: Component<{ todo: Todo }> = function ({ todo }) {
         {isEditing() ? '✕' : '✎'}
       </button>
 
-      <button onClick={() => deleteTodo(todo.id)}>🗑</button>
+      {/* <button onClick={() => deleteTodo(todo.id)}>🗑</button> */}
 
       <Switch>
         <Match when={isEditing()}>

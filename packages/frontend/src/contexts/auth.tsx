@@ -24,14 +24,14 @@ export const AuthProvider = function (props: { children: JSXElement }) {
   const { request } = useApi();
 
   const signUp: ContextType['signUp'] = async function (data) {
-    const resp = await request('/auth/signup', {
+    const resp = await fetch('http://localhost:4000/api/v1/auth/signup', {
       method: 'POST',
       body: JSON.stringify({
         username: data.username,
         password: data.password,
         password_confirmation: data.passwordConfirmation,
       }),
-    });
+    }).then((res) => res.json());
 
     if (resp.access_token) {
       ls.authToken.set(resp.access_token);
@@ -42,13 +42,13 @@ export const AuthProvider = function (props: { children: JSXElement }) {
   };
 
   const logIn: ContextType['logIn'] = async function ({ username, password }) {
-    const resp = await request('/auth/login', {
+    const resp = await fetch('http://localhost:4000/api/v1/auth/login', {
       method: 'POST',
       body: JSON.stringify({
         username: username,
         password: password,
       }),
-    });
+    }).then((r) => r.json());
 
     if (resp.access_token) {
       ls.authToken.set(resp.access_token);
