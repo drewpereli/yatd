@@ -13,6 +13,7 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import config from '../config';
 import { AuthErrorCode, Context } from '../../types';
+import { Int } from 'type-graphql';
 
 function isAuthenticated(
   ctx: Context
@@ -53,7 +54,7 @@ export class TodoResolver {
   @Mutation((returns) => Todo)
   async updateTodo(
     @Ctx() ctx: Context,
-    @Arg('id') id: number,
+    @Arg('id', (type) => Int) id: number,
     @Arg('title') title: string,
     @Arg('done', { nullable: true, defaultValue: false }) done: boolean,
     @Arg('description', { nullable: true }) description?: string
@@ -86,7 +87,7 @@ export class TodoResolver {
   }
 
   @Mutation((returns) => Todo)
-  async deleteTodo(@Ctx() ctx: Context, @Arg('id') id: number) {
+  async deleteTodo(@Ctx() ctx: Context, @Arg('id', (type) => Int) id: number) {
     if (!isAuthenticated(ctx)) throw new Error(AuthErrorCode.NotLoggedIn);
 
     const todo = await ctx.prisma.todo.findFirst({
