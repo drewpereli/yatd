@@ -7,7 +7,12 @@ import {
 } from 'solid-js';
 import { createStore } from 'solid-js/store';
 import { useApi } from './api';
-import { GetTodosDocument } from '../graphql/generated';
+import {
+  CreateTodoDocument,
+  CreateTodoMutation,
+  CreateTodoMutationVariables,
+  GetTodosDocument,
+} from '../graphql/generated';
 import { Todo } from '../types';
 
 const StoreContext = createContext<ContextType>();
@@ -17,9 +22,7 @@ type ContextType = {
   fetchTodosIsRunning: Accessor<boolean>;
   createTodosIsRunning: Accessor<boolean>;
   fetchTodos: () => Promise<void>;
-  // createTodo: (
-  //   data: Omit<Todo, 'id' | 'userId' | 'createdAt' | 'done'>
-  // ) => Promise<void>;
+  createTodo: (data: CreateTodoMutationVariables) => Promise<void>;
   // updateTodo: (todo: Omit<Todo, 'userId'>) => Promise<void>;
   // deleteTodo: (id: number) => Promise<void>;
 };
@@ -34,14 +37,16 @@ export const DataProvider = function (props: { children: JSXElement }) {
     return request({ document: GetTodosDocument });
   };
 
-  // const createTodo = async (
-  //   todo: Omit<Todo, 'id' | 'userId' | 'createdAt'>
-  // ): Promise<Todo> => {
-  //   return request('/todos', {
-  //     method: 'POST',
-  //     body: JSON.stringify(todo),
-  //   });
-  // };
+  const createTodo = async (
+    todo: CreateTodoMutationVariables
+  ): Promise<CreateTodoMutation['createTodo']> => {
+    const resp = await request({
+      document: CreateTodoDocument,
+      variables: todo,
+    });
+
+    return resp.createTodo;
+  };
 
   // const updateTodo = async (todo: Omit<Todo, 'userId'>): Promise<Todo> => {
   //   return request(`/todos/${todo.id}`, {
@@ -66,18 +71,15 @@ export const DataProvider = function (props: { children: JSXElement }) {
       setTodos(t.todos);
       setFetchTodosIsRunning(false);
     },
-    // async createTodo(data) {
-    //   setCreateTodosIsRunning(true);
+    async createTodo(data: CreateTodoMutationVariables) {
+      setCreateTodosIsRunning(true);
 
-    //   const t = await createTodo({
-    //     ...data,
-    //     done: false,
-    //   });
+      const t = await createTodo(data);
 
-    //   setTodos([...todos, t]);
+      setTodos([...todos, t]);
 
-    //   setCreateTodosIsRunning(false);
-    // },
+      setCreateTodosIsRunning(false);
+    },
     // async updateTodo(data) {
     //   const t = await updateTodo(data);
 
