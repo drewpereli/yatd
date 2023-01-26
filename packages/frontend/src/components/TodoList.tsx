@@ -7,8 +7,20 @@ const TodoList: Component = function () {
 
   onMount(data.fetchTodos);
 
-  const doneTodos = () => data.todos.filter((todo) => todo.done);
-  const notDoneTodos = () => data.todos.filter((todo) => !todo.done);
+  const doneTodos = () =>
+    data.todos
+      .filter((todo) => todo.done)
+      .sort(
+        (a, b) =>
+          new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+      );
+  const notDoneTodos = () =>
+    data.todos
+      .filter((todo) => !todo.done)
+      .sort(
+        (a, b) =>
+          new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+      );
 
   return (
     <div class="space-y-4">
