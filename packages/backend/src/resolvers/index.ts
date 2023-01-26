@@ -1,10 +1,18 @@
-import { Arg, Ctx, Mutation, Query, Resolver } from 'type-graphql';
+import {
+  Arg,
+  Ctx,
+  Field,
+  Mutation,
+  ObjectType,
+  Query,
+  Resolver,
+} from 'type-graphql';
 import { Todo } from '@generated/type-graphql';
 import { User } from '@prisma/client';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import config from '../config';
-import { AuthErrorCode, Context } from '../app';
+import { AuthErrorCode, Context } from '../../types';
 
 function isAuthenticated(
   ctx: Context
@@ -102,14 +110,20 @@ export class TodoResolver {
   }
 }
 
+@ObjectType()
+class AuthResponse {
+  @Field()
+  declare token: string;
+}
+
 @Resolver()
 export class UserResolver {
-  @Mutation((returns) => String)
+  @Mutation((returns) => AuthResponse)
   async createUser(
     @Arg('username') username: string,
     @Arg('password') password: string,
     @Ctx() { prisma }: Context
-  ): Promise<string> {
+  ): Promise<{ token: string }> {
     if (!isStrongPassword(password))
       throw new Error(AuthErrorCode.WeakPassword);
 
@@ -131,15 +145,15 @@ export class UserResolver {
       },
     });
 
-    return generateAccessToken(user);
+    return { token: generateAccessToken(user) };
   }
 
-  @Query((returns) => String)
+  @Query((returns) => AuthResponse)
   async login(
     @Arg('username') username: string,
     @Arg('password') password: string,
     @Ctx() { prisma }: Context
-  ): Promise<string> {
+  ): Promise<{ token: string }> {
     const user = await prisma.user.findUnique({
       where: { username },
     });
@@ -154,7 +168,7 @@ export class UserResolver {
       throw new Error(AuthErrorCode.AuthFailed);
     }
 
-    return generateAccessToken(user);
+    return { token: generateAccessToken(user) };
   }
 }
 

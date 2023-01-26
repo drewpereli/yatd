@@ -10,23 +10,7 @@ import { PrismaClient } from '@prisma/client';
 import { TodoResolver, UserResolver } from './resolvers';
 
 import jwt from 'jsonwebtoken';
-
-export type Context = {
-  prisma: PrismaClient;
-  userId: number | null;
-};
-
-export type JwtPayload = {
-  id: number;
-  username: string;
-};
-
-export enum AuthErrorCode {
-  AuthFailed = 'auth_failed',
-  WeakPassword = 'weak_password',
-  UsernameTaken = 'username_taken',
-  NotLoggedIn = 'not_logged_in',
-}
+import { Context, JwtPayload } from '../types';
 
 (async () => {
   const schema = await buildSchema({
