@@ -23,6 +23,12 @@ const config = convict({
     default: '',
     sensitive: true,
   },
+  NODE_ENV: {
+    doc: 'The node environment.',
+    env: 'NODE_ENV',
+    format: ['production', 'development', 'test'],
+    default: null,
+  },
 });
 
 config.validate();
