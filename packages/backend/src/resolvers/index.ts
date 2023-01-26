@@ -188,3 +188,11 @@ function generateAccessToken(user: User) {
 function isStrongPassword(password: string) {
   return password.length >= 8;
 }
+
+@Resolver()
+export class IsOnlineResolver {
+  @Query((returns) => Boolean)
+  isOnline(): boolean {
+    return true;
+  }
+}

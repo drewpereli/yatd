@@ -7,14 +7,14 @@ import 'reflect-metadata';
 import { graphqlHTTP } from 'express-graphql';
 import { buildSchema } from 'type-graphql';
 import { PrismaClient } from '@prisma/client';
-import { TodoResolver, UserResolver } from './resolvers';
+import { IsOnlineResolver, TodoResolver, UserResolver } from './resolvers';
 
 import jwt from 'jsonwebtoken';
 import { Context, JwtPayload } from '../types';
 
 (async () => {
   const schema = await buildSchema({
-    resolvers: [TodoResolver, UserResolver],
+    resolvers: [TodoResolver, UserResolver, IsOnlineResolver],
     validate: false,
   });
 
