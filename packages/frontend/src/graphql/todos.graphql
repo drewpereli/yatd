@@ -4,6 +4,7 @@ query GetTodos {
     title
     description
     done
+    createdAt
   }
 }
 
@@ -17,6 +18,7 @@ mutation CreateTodo($title: String!, $description: String, $done: Boolean) {
     title
     description
     done
+    createdAt
   }
 }
 
@@ -31,6 +33,7 @@ mutation UpdateTodo($id: Int!, $title: String!, $description: String, $done: Boo
     title
     description
     done
+    createdAt
   }
 }
 

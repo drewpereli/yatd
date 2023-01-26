@@ -29,6 +29,7 @@ export class TodoResolver {
 
     return ctx.prisma.todo.findMany({
       where: { userId: ctx.userId },
+      orderBy: { createdAt: 'asc' },
     });
   }
 
