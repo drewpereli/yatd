@@ -1,11 +1,14 @@
 import { Component, For, onMount, Show } from 'solid-js';
 import { useData } from '../contexts/data';
+import { createTask } from '../utils/task';
 import TodoItem from './TodoItem';
 
 const TodoList: Component = function () {
   const data = useData();
 
-  onMount(data.fetchTodos);
+  const fetchTodosTask = createTask(data.fetchTodos);
+
+  onMount(fetchTodosTask.perform);
 
   const doneTodos = () =>
     data.todos
@@ -24,7 +27,7 @@ const TodoList: Component = function () {
 
   return (
     <div class="space-y-4">
-      <Show when={!data.fetchTodosIsRunning()} fallback={<div>Loading...</div>}>
+      <Show when={!fetchTodosTask.isRunning()} fallback={<div>Loading...</div>}>
         <div class="space-y-2">
           <h3 class="text-xl font-bold">Not Done</h3>
           <For each={notDoneTodos()}>{(todo) => <TodoItem todo={todo} />}</For>

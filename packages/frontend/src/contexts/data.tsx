@@ -25,8 +25,6 @@ const StoreContext = createContext<ContextType>();
 
 type ContextType = {
   todos: Todo[];
-  fetchTodosIsRunning: Accessor<boolean>;
-  createTodosIsRunning: Accessor<boolean>;
   fetchTodos: () => Promise<void>;
   createTodo: (data: CreateTodoMutationVariables) => Promise<void>;
   updateTodo: (data: UpdateTodoMutationVariables) => Promise<void>;
@@ -35,13 +33,7 @@ type ContextType = {
 
 export const DataProvider = function (props: { children: JSXElement }) {
   const [todos, setTodos] = createStore<Todo[]>([]);
-  const [fetchTodosIsRunning, setFetchTodosIsRunning] = createSignal(false);
-  const [createTodosIsRunning, setCreateTodosIsRunning] = createSignal(false);
   const { request } = useApi();
-
-  const fetchTodos = async () => {
-    return request({ document: GetTodosDocument });
-  };
 
   const createTodo = async (
     todo: CreateTodoMutationVariables
@@ -78,22 +70,14 @@ export const DataProvider = function (props: { children: JSXElement }) {
 
   const data: ContextType = {
     todos,
-    fetchTodosIsRunning,
-    createTodosIsRunning,
     async fetchTodos() {
-      setFetchTodosIsRunning(true);
-      const t = await fetchTodos();
-      setTodos(t.todos);
-      setFetchTodosIsRunning(false);
+      const resp = await request({ document: GetTodosDocument });
+      setTodos(resp.todos);
     },
     async createTodo(data: CreateTodoMutationVariables) {
-      setCreateTodosIsRunning(true);
-
       const t = await createTodo(data);
 
       setTodos([...todos, t]);
-
-      setCreateTodosIsRunning(false);
     },
     async updateTodo(data) {
       const t = await updateTodo(data);
