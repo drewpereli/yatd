@@ -1,10 +1,4 @@
-import {
-  Accessor,
-  createContext,
-  createSignal,
-  useContext,
-  JSXElement,
-} from 'solid-js';
+import { createContext, useContext, JSXElement } from 'solid-js';
 import { createStore } from 'solid-js/store';
 import { useApi } from './api';
 import {
