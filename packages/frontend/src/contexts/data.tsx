@@ -11,7 +11,13 @@ import {
   CreateTodoDocument,
   CreateTodoMutation,
   CreateTodoMutationVariables,
+  DeleteTodoDocument,
+  DeleteTodoMutation,
+  DeleteTodoMutationVariables,
   GetTodosDocument,
+  UpdateTodoDocument,
+  UpdateTodoMutation,
+  UpdateTodoMutationVariables,
 } from '../graphql/generated';
 import { Todo } from '../types';
 
@@ -23,8 +29,8 @@ type ContextType = {
   createTodosIsRunning: Accessor<boolean>;
   fetchTodos: () => Promise<void>;
   createTodo: (data: CreateTodoMutationVariables) => Promise<void>;
-  // updateTodo: (todo: Omit<Todo, 'userId'>) => Promise<void>;
-  // deleteTodo: (id: number) => Promise<void>;
+  updateTodo: (data: UpdateTodoMutationVariables) => Promise<void>;
+  deleteTodo: (data: DeleteTodoMutationVariables) => Promise<void>;
 };
 
 export const DataProvider = function (props: { children: JSXElement }) {
@@ -48,18 +54,27 @@ export const DataProvider = function (props: { children: JSXElement }) {
     return resp.createTodo;
   };
 
-  // const updateTodo = async (todo: Omit<Todo, 'userId'>): Promise<Todo> => {
-  //   return request(`/todos/${todo.id}`, {
-  //     method: 'PUT',
-  //     body: JSON.stringify(todo),
-  //   });
-  // };
+  const updateTodo = async (
+    todo: UpdateTodoMutationVariables
+  ): Promise<UpdateTodoMutation['updateTodo']> => {
+    const resp = await request({
+      document: UpdateTodoDocument,
+      variables: todo,
+    });
 
-  // const deleteTodo = async (id: number): Promise<void> => {
-  //   return request(`/todos/${id}`, {
-  //     method: 'DELETE',
-  //   });
-  // };
+    return resp.updateTodo;
+  };
+
+  const deleteTodo = async (
+    vars: DeleteTodoMutationVariables
+  ): Promise<DeleteTodoMutation['deleteTodo']> => {
+    const resp = await request({
+      document: DeleteTodoDocument,
+      variables: vars,
+    });
+
+    return resp.deleteTodo;
+  };
 
   const data: ContextType = {
     todos,
@@ -80,16 +95,16 @@ export const DataProvider = function (props: { children: JSXElement }) {
 
       setCreateTodosIsRunning(false);
     },
-    // async updateTodo(data) {
-    //   const t = await updateTodo(data);
+    async updateTodo(data) {
+      const t = await updateTodo(data);
 
-    //   setTodos(todos.map((todo) => (todo.id === t.id ? t : todo)));
-    // },
-    // async deleteTodo(id) {
-    //   await deleteTodo(id);
+      setTodos(todos.map((todo) => (todo.id === t.id ? t : todo)));
+    },
+    async deleteTodo(data) {
+      const { id } = await deleteTodo(data);
 
-    //   setTodos(todos.filter((todo) => todo.id !== id));
-    // },
+      setTodos(todos.filter((todo) => todo.id !== id));
+    },
   };
 
   return (
