@@ -1,7 +1,10 @@
 import { Accessor, createContext, useContext, JSXElement } from 'solid-js';
-import { AuthErrorCode } from 'backend/src/routes/auth-routes';
 import { useLocalStorage } from './local-storage';
 import { useApi } from './api';
+import { AuthErrorCode } from 'backend/types';
+import { CreateUserDocument, LogInDocument } from '../graphql/generated';
+
+const authErrorMessages = Object.values(AuthErrorCode);
 
 const AuthContext = createContext<ContextType>();
 
@@ -10,7 +13,6 @@ type ContextType = {
   signUp: (data: {
     username: string;
     password: string;
-    passwordConfirmation: string;
   }) => Promise<boolean | AuthErrorCode>;
   logIn: (data: {
     username: string;
@@ -19,43 +21,66 @@ type ContextType = {
   logOut: () => Promise<void>;
 };
 
+type ErrorResponse = {
+  response: {
+    errors: { message: string }[];
+  };
+};
+
+function isResponseError(error: unknown): error is ErrorResponse {
+  return typeof error === 'object' && error !== null && 'response' in error;
+}
+
+function isAuthErrorCode(str: string): str is AuthErrorCode {
+  return (authErrorMessages as string[]).includes(str);
+}
+
 export const AuthProvider = function (props: { children: JSXElement }) {
   const ls = useLocalStorage();
   const { request } = useApi();
 
   const signUp: ContextType['signUp'] = async function (data) {
-    const resp = await fetch('http://localhost:4000/api/v1/auth/signup', {
-      method: 'POST',
-      body: JSON.stringify({
-        username: data.username,
-        password: data.password,
-        password_confirmation: data.passwordConfirmation,
-      }),
-    }).then((res) => res.json());
+    try {
+      const resp = await request({
+        document: CreateUserDocument,
+        variables: data,
+      });
 
-    if (resp.access_token) {
-      ls.authToken.set(resp.access_token);
-      return true;
+      if (resp.createUser.token) {
+        ls.authToken.set(resp.createUser.token);
+        return true;
+      }
+    } catch (error) {
+      if (!isResponseError(error)) throw error;
+
+      const { message } = error.response.errors[0];
+
+      if (isAuthErrorCode(message)) return message;
     }
 
-    return resp.errors?.[0]?.msg ?? false;
+    return false;
   };
 
   const logIn: ContextType['logIn'] = async function ({ username, password }) {
-    const resp = await fetch('http://localhost:4000/api/v1/auth/login', {
-      method: 'POST',
-      body: JSON.stringify({
-        username: username,
-        password: password,
-      }),
-    }).then((r) => r.json());
+    try {
+      const resp = await request({
+        document: LogInDocument,
+        variables: { username, password },
+      });
 
-    if (resp.access_token) {
-      ls.authToken.set(resp.access_token);
-      return true;
+      if (resp.login.token) {
+        ls.authToken.set(resp.login.token);
+        return true;
+      }
+    } catch (error) {
+      if (!isResponseError(error)) throw error;
+
+      const { message } = error.response.errors[0];
+
+      if (isAuthErrorCode(message)) return message;
     }
 
-    return resp.errors?.[0]?.msg ?? false;
+    return false;
   };
 
   const logOut: ContextType['logOut'] = async function () {

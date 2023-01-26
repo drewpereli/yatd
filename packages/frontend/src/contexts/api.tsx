@@ -24,9 +24,11 @@ export const ApiProvider = function (props: { children: JSXElement }) {
   const [isOffline, setIsOffline] = createSignal(false);
 
   const r = async (options: RequestOptions) => {
+    const token = ls.authToken.get();
+
     const headers = {
       ...options.requestHeaders,
-      Authorization: `Bearer ${ls.authToken.get()}`,
+      Authorization: token ? `Bearer ${ls.authToken.get()}` : '',
     };
 
     const fullOptions = {

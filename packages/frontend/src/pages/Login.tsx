@@ -3,7 +3,7 @@ import { Component, createSignal } from 'solid-js';
 import Button from '../components/Button';
 import Input from '../components/Input';
 import { useAuth } from '../contexts/auth';
-import type { AuthErrorCode } from 'backend/src/routes/auth-routes';
+import type { AuthErrorCode } from 'backend/types';
 
 const errorMessages: Partial<Record<AuthErrorCode, string>> = {
   auth_failed: 'Username or password is incorrect',
