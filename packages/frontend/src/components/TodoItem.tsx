@@ -9,6 +9,7 @@ import {
 import { useData } from '../contexts/data';
 import type { Todo } from '../types';
 import Button from './Button';
+import Icon from './Icon';
 import Input from './Input';
 import TextArea from './TextArea';
 
@@ -54,10 +55,12 @@ const TodoItem: Component<{ todo: Todo }> = function (props) {
       </Show>
 
       <button onClick={() => setIsEditing(!isEditing())}>
-        {isEditing() ? '✕' : '✎'}
+        <Icon icon={isEditing() ? 'xmark' : 'pen'} />
       </button>
 
-      <button onClick={() => deleteTodo(props.todo)}>🗑</button>
+      <button onClick={() => deleteTodo(props.todo)}>
+        <Icon icon="trash" />
+      </button>
 
       <Switch>
         <Match when={isEditing()}>
