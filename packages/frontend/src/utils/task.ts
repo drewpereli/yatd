@@ -19,3 +19,7 @@ export function createTask<Args extends any[], Ret>(
     perform,
   };
 }
+
+export async function timeout(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
