@@ -8,7 +8,8 @@
     "start": "ts-node ./src/app.ts",
     "dev": "nodemon ./src/app.ts",
     "lint": "eslint .",
-    "lint:fix": "eslint . --fix"
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write ."
   },
   "keywords": [],
   "author": "",
@@ -43,6 +44,7 @@
     "@typescript-eslint/parser": "^5.49.0",
     "eslint": "^8.32.0",
     "nodemon": "^2.0.20",
+    "prettier": "2.8.3",
     "ts-node": "^10.9.1",
     "typegraphql-prisma": "^0.23.3",
     "typescript": "^4.9.4"
