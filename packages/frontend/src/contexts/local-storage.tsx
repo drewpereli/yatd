@@ -8,7 +8,7 @@ import {
 
 const KEYS = ['authToken'] as const satisfies readonly string[];
 
-type Key = typeof KEYS[number];
+type Key = (typeof KEYS)[number];
 
 type ContextType = {
   [k in Key]: {

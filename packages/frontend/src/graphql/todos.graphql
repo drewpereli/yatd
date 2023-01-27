@@ -9,11 +9,7 @@ query GetTodos {
 }
 
 mutation CreateTodo($title: String!, $description: String, $done: Boolean) {
-  createTodo(
-    title: $title
-    description: $description
-    done: $done
-  ) {
+  createTodo(title: $title, description: $description, done: $done) {
     id
     title
     description
@@ -22,13 +18,13 @@ mutation CreateTodo($title: String!, $description: String, $done: Boolean) {
   }
 }
 
-mutation UpdateTodo($id: Int!, $title: String!, $description: String, $done: Boolean) {
-  updateTodo(
-    id: $id
-    title: $title
-    description: $description
-    done: $done
-  ) {
+mutation UpdateTodo(
+  $id: Int!
+  $title: String!
+  $description: String
+  $done: Boolean
+) {
+  updateTodo(id: $id, title: $title, description: $description, done: $done) {
     id
     title
     description
@@ -38,9 +34,7 @@ mutation UpdateTodo($id: Int!, $title: String!, $description: String, $done: Boo
 }
 
 mutation DeleteTodo($id: Int!) {
-  deleteTodo(
-    id: $id
-  ) {
+  deleteTodo(id: $id) {
     id
   }
 }
