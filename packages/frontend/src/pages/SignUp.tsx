@@ -3,7 +3,8 @@ import { Component, createSignal } from 'solid-js';
 import Button from '../components/Button';
 import Input from '../components/Input';
 import { useAuth } from '../contexts/auth';
-import type { AuthErrorCode } from 'backend/src/routes/auth-routes';
+import type { AuthErrorCode } from 'backend/types';
+import { useToast } from '../contexts/toast';
 
 const errorMessages: Partial<Record<AuthErrorCode, string>> = {
   weak_password: 'Password is too weak',
@@ -22,6 +23,8 @@ const SignUp: Component = function () {
 
   const { signUp } = useAuth();
 
+  const toasts = useToast();
+
   const onSignUp = async () => {
     if (!username() || !password() || !passwordConfirmation()) {
       setError('Username, password, and password confirmation are required');
@@ -36,11 +39,12 @@ const SignUp: Component = function () {
     const successOrMessage = await signUp({
       username: username(),
       password: password(),
-      passwordConfirmation: passwordConfirmation(),
     });
 
     if (successOrMessage === true) {
       navigate('/');
+      toasts.success(`Welcome, ${username()}!`);
+      return;
     }
 
     const message =

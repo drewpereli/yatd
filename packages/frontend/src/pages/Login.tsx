@@ -4,6 +4,7 @@ import Button from '../components/Button';
 import Input from '../components/Input';
 import { useAuth } from '../contexts/auth';
 import type { AuthErrorCode } from 'backend/types';
+import { useToast } from '../contexts/toast';
 
 const errorMessages: Partial<Record<AuthErrorCode, string>> = {
   auth_failed: 'Username or password is incorrect',
@@ -19,6 +20,7 @@ const Login: Component = function () {
   const navigate = useNavigate();
 
   const { logIn } = useAuth();
+  const toasts = useToast();
 
   const onLogIn = async () => {
     if (!username() || !password()) {
@@ -34,6 +36,7 @@ const Login: Component = function () {
     if (successOrMessage === true) {
       setError('');
       navigate('/');
+      toasts.success(`Welcome back, ${username()}!`);
       return;
     }
 
