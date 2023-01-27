@@ -9,6 +9,7 @@ const HomePage: Component = function () {
 
   if (!isLoggedIn()) {
     useNavigate()('/login');
+    // eslint-disable-next-line solid/components-return-once
     return;
   }
 

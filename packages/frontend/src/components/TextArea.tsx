@@ -9,6 +9,7 @@ const TextArea: Component<{
   class?: string;
   rows?: number; // Defaults to 7
 }> = function (props) {
+  // eslint-disable-next-line solid/reactivity
   const id = randomId(props.label || 'input');
 
   return (

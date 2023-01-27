@@ -8,6 +8,7 @@ const Input: Component<{
   type?: string;
   class?: string;
 }> = function (props) {
+  // eslint-disable-next-line solid/reactivity
   const id = randomId(props.label || 'input');
 
   return (

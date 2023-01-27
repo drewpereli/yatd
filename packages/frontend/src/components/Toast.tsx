@@ -2,10 +2,7 @@ import { Component, createSignal, onMount } from 'solid-js';
 import { DEFAULT_TIMEOUT, Toast, useToast } from '../contexts/toast';
 import { timeout } from '../utils/task';
 
-const ToastComponent: Component<{ toast: Toast; class?: string }> = function ({
-  toast,
-  class: extraClasses,
-}) {
+const ToastComponent: Component<{ toast: Toast; class?: string }> = function (props) {
   const toasts = useToast();
 
   const [animating, setAnimating] = createSignal<null | 'in' | 'out'>(null);
@@ -16,14 +13,14 @@ const ToastComponent: Component<{ toast: Toast; class?: string }> = function ({
       danger: 'bg-red-100 text-red-800',
     };
 
-    const colorClasses = colorClassesOptions[toast.type];
+    const colorClasses = colorClassesOptions[props.toast.type];
 
     const animatingClasses = animating() !== 'in' ? 'translate-x-[38rem]' : '';
 
     const staticClasses =
       'block text-left w-[36rem] flex items-center p-4 rounded text-xl font-semibold border border-current transition-transform';
 
-    return [staticClasses, colorClasses, animatingClasses, extraClasses].join(
+    return [staticClasses, colorClasses, animatingClasses, props.class].join(
       ' '
     );
   };
@@ -36,7 +33,7 @@ const ToastComponent: Component<{ toast: Toast; class?: string }> = function ({
     // The little-extra is because if there are toasts above this one, and they move down instantly when
     // this toast exist, it looks abrupt.
     await timeout(transitionDuration + 50);
-    toasts.remove(toast.id);
+    toasts.remove(props.toast.id);
   };
 
   onMount(() => {
@@ -52,7 +49,7 @@ const ToastComponent: Component<{ toast: Toast; class?: string }> = function ({
       onClick={remove}
       style={{ 'transition-duration': `${transitionDuration}ms` }}
     >
-      <p>{toast.message}</p>
+      <p>{props.toast.message}</p>
     </button>
   );
 };

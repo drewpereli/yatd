@@ -1,27 +1,40 @@
-import { Component, createSignal, Match, Show, Switch } from 'solid-js';
+import {
+  Component,
+  createSignal,
+  createEffect,
+  Match,
+  Show,
+  Switch,
+} from 'solid-js';
 import { useData } from '../contexts/data';
 import type { Todo } from '../types';
 import Button from './Button';
 import Input from './Input';
 import TextArea from './TextArea';
 
-const TodoItem: Component<{ todo: Todo }> = function ({ todo }) {
+const TodoItem: Component<{ todo: Todo }> = function (props) {
   const { updateTodo, deleteTodo } = useData();
   const [isEditing, setIsEditing] = createSignal(false);
 
-  const [title, setTitle] = createSignal(todo.title);
-  const [description, setDescription] = createSignal(todo.description ?? '');
+  const [title, setTitle] = createSignal('');
+
+  const [description, setDescription] = createSignal('');
+
+  createEffect(() => {
+    setTitle(props.todo.title);
+    setDescription(props.todo.description ?? '');
+  });
 
   const toggleTodo = async () => {
     return updateTodo({
-      ...todo,
-      done: !todo.done,
+      ...props.todo,
+      done: !props.todo.done,
     });
   };
 
   const saveChanges = async () => {
     await updateTodo({
-      ...todo,
+      ...props.todo,
       title: title(),
       description: description(),
     });
@@ -31,11 +44,11 @@ const TodoItem: Component<{ todo: Todo }> = function ({ todo }) {
 
   return (
     <div class="grid grid-cols-[1rem_1fr_1rem_1rem] gap-2">
-      <input type="checkbox" checked={todo.done} onChange={toggleTodo} />
+      <input type="checkbox" checked={props.todo.done} onChange={toggleTodo} />
 
       <Show
         when={isEditing()}
-        fallback={<h3 class="font-bold">{todo.title}</h3>}
+        fallback={<h3 class="font-bold">{props.todo.title}</h3>}
       >
         <Input value={title()} setValue={setTitle} />
       </Show>
@@ -44,7 +57,7 @@ const TodoItem: Component<{ todo: Todo }> = function ({ todo }) {
         {isEditing() ? '✕' : '✎'}
       </button>
 
-      <button onClick={() => deleteTodo(todo)}>🗑</button>
+      <button onClick={() => deleteTodo(props.todo)}>🗑</button>
 
       <Switch>
         <Match when={isEditing()}>
@@ -55,8 +68,8 @@ const TodoItem: Component<{ todo: Todo }> = function ({ todo }) {
           />
         </Match>
 
-        <Match when={todo.description}>
-          <p class="truncate col-start-2">{todo.description}</p>
+        <Match when={props.todo.description}>
+          <p class="truncate col-start-2">{props.todo.description}</p>
         </Match>
       </Switch>
 
