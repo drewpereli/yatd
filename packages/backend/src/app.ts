@@ -39,7 +39,7 @@ import { Context, JwtPayload } from '../types';
 
   app.use(
     '/graphql',
-    graphqlHTTP(async (_req, resp, info) => {
+    graphqlHTTP(async (_req) => {
       const authToken = _req.headers.authorization?.split(' ')?.[1];
       let jwtPayload: JwtPayload | undefined;
 
