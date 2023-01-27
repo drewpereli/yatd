@@ -2,7 +2,6 @@ import { defineConfig } from 'vite';
 import solidPlugin from 'vite-plugin-solid';
 import { VitePWA } from 'vite-plugin-pwa';
 import vitePluginFaviconsInject from 'vite-plugin-favicons-inject';
-import fs from 'node:fs/promises';
 
 export default defineConfig({
   plugins: [
@@ -31,6 +30,7 @@ export default defineConfig({
         ],
       },
     }),
+    // @ts-expect-error vite-plugin-favicons-inject is not typed, and the inferred type isn't compatible with what vite expects from plugins
     vitePluginFaviconsInject('./public/images/logo.png'),
     {
       name: 'remove-favicons-manifest',

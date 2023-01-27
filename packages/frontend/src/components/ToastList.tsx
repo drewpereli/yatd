@@ -2,7 +2,7 @@ import { Component, For } from 'solid-js';
 import { useToast } from '../contexts/toast';
 import ToastComponent from './Toast';
 
-const ToastList: Component<{}> = function (props) {
+const ToastList: Component = function () {
   const { toasts } = useToast();
 
   return (

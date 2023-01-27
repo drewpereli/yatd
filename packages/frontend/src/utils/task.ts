@@ -1,6 +1,6 @@
 import { createSignal } from 'solid-js';
 
-export function createTask<Args extends any[], Ret>(
+export function createTask<Args extends unknown[], Ret>(
   fn: (...args: Args) => Promise<Ret>
 ) {
   const [isRunning, setIsRunning] = createSignal(false);

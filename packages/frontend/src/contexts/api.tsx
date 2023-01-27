@@ -11,7 +11,7 @@ import { GraphQLClient, Variables, type RequestOptions } from 'graphql-request';
 import { IsOnlineDocument } from '../graphql/generated';
 
 type ContextType = {
-  request: <T = any, V extends Variables = Variables>(
+  request: <T = unknown, V extends Variables = Variables>(
     options: RequestOptions<V, T>
   ) => Promise<T>;
   isOffline: Accessor<boolean>;
