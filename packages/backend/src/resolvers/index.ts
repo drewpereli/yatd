@@ -16,17 +16,18 @@ import config from '../config';
 import { AuthErrorCode, Context } from '../../types';
 import { Int } from 'type-graphql';
 
-function isAuthenticated(
+function ensureAuthenticated(
   ctx: Context
-): ctx is Omit<Context, 'userId'> & { userId: number } {
-  return ctx.userId !== null;
+): asserts ctx is Omit<Context, 'userId'> & { userId: number } {
+  if (typeof ctx.userId !== 'number')
+    throw new Error(AuthErrorCode.NotLoggedIn);
 }
 
 @Resolver((of) => Todo)
 export class TodoResolver {
   @Query((returns) => [Todo])
   async todos(@Ctx() ctx: Context) {
-    if (!isAuthenticated(ctx)) throw new Error(AuthErrorCode.NotLoggedIn);
+    ensureAuthenticated(ctx);
 
     return ctx.prisma.todo.findMany({
       where: { userId: ctx.userId },
@@ -41,7 +42,7 @@ export class TodoResolver {
     @Arg('done', { nullable: true, defaultValue: false }) done: boolean,
     @Arg('description', { nullable: true }) description?: string
   ) {
-    if (!isAuthenticated(ctx)) throw new Error(AuthErrorCode.NotLoggedIn);
+    ensureAuthenticated(ctx);
 
     return ctx.prisma.todo.create({
       data: {
@@ -61,7 +62,7 @@ export class TodoResolver {
     @Arg('done', { nullable: true, defaultValue: false }) done: boolean,
     @Arg('description', { nullable: true }) description?: string
   ) {
-    if (!isAuthenticated(ctx)) throw new Error(AuthErrorCode.NotLoggedIn);
+    ensureAuthenticated(ctx);
 
     const todo = await ctx.prisma.todo.findFirst({
       where: {
@@ -90,7 +91,7 @@ export class TodoResolver {
 
   @Mutation((returns) => Todo)
   async deleteTodo(@Ctx() ctx: Context, @Arg('id', (type) => Int) id: number) {
-    if (!isAuthenticated(ctx)) throw new Error(AuthErrorCode.NotLoggedIn);
+    ensureAuthenticated(ctx);
 
     const todo = await ctx.prisma.todo.findFirst({
       where: {
