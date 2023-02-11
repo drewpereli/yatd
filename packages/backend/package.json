@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "prisma-gen": "prisma generate",
     "start": "ts-node ./src/app.ts",
     "dev": "nodemon ./src/app.ts",
     "lint": "eslint .",

@@ -4,7 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "concurrently \"npm run dev -w frontend\" \"npm run dev -w backend\"",
+    "prisma-gen": "npm run prisma-gen -w backend"
   },
   "keywords": [],
   "author": "",
@@ -12,5 +14,8 @@
   "workspaces": [
     "packages/frontend",
     "packages/backend"
-  ]
+  ],
+  "devDependencies": {
+    "concurrently": "^7.6.0"
+  }
 }
